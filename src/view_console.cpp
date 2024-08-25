@@ -61,3 +61,11 @@ void ConsoleView::setup_view() {
 void ConsoleView::drawPlayer(int y, int x) {
     mvaddch(y-1, x, 'P');
 }
+
+void ConsoleView::drawBullet(int y, int x) {
+    mvaddch(y, x, '|');
+}
+
+void ConsoleView::drawAlien(int y, int x) {
+    mvaddch(y, x, 'A');
+}   

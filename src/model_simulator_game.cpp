@@ -3,7 +3,11 @@
 #include <stdlib.h>
 #include <algorithm> 
 
-Player::Player(int x, int y) : x(x), y(y) {} 
+Player::Player(int x, int y, int startLives) : x(x), y(y), lives(startLives) {} 
+
+bool Player::isAlive() {
+    return lives > 0;
+}
 
 int Player::getX() { 
     return x;
@@ -11,6 +15,10 @@ int Player::getX() {
 
 int Player::getY() { 
     return y;
+}
+
+int Player::getLives() {
+    return lives;
 }
 
 void Player::setX(int a) {
@@ -21,6 +29,47 @@ void Player::setY(int a) {
     y = a;
 }
 
+void Player::setLives(int newLives) {
+    lives = newLives;
+}
+
+Bullet::Bullet(int y, int x, int velocityY) : x(x), y(y), velocityY(velocityY) {}
+
+int Bullet::getX() {
+    return x;
+}
+
+int Bullet::getY() {
+    return y;
+}
+
+void Bullet::setY(int newY) {
+    y = newY;
+}
+
+bool Bullet::isOffScreen() {
+    return y < 1;
+}
+
+void Bullet::move(int velocity) { 
+    y = y + velocity; 
+}
+
+Alien::Alien(int startY, int startX) : y(startY), x(startX) {}
+
+int Alien::getX() {
+    return x;
+}
+
+int Alien::getY() {
+    return y;
+}
+
+bool Alien::isAlive() { return alive; }
+
+void Alien::destroy() { alive = false; }
+
+void Alien::move(int dx, int dy) { x += dx; y += dy; }
 
 GameModel::GameModel()
     : width(40), height(24), player(width / 2, height - 2) {
@@ -123,6 +172,8 @@ void GameModel::check_collisions() {
     bullets.erase(std::remove_if(bullets.begin(), bullets.end(),
         [](Bullet &b) { return b.isOffScreen(); }), bullets.end());
 }
+
+void GameModel::shoot() { bullets.emplace_back(player.getY(), player.getX(), -1); }
 
 void GameModel::move_aliens() {
     bool needToMoveDown = false;

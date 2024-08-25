@@ -17,13 +17,9 @@ public:
 
     void drawPlayer(int y, int x);  // Function to draw the player
 
-    void drawBullet(int y, int x) {
-        mvaddch(y, x, '|');
-    }
+    void drawBullet(int y, int x);
 
-    void drawAlien(int y, int x) {
-        mvaddch(y, x, 'A');
-    }   
+    void drawAlien(int y, int x);
 
 private:
     // Textures

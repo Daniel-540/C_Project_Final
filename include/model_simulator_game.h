@@ -4,41 +4,47 @@
 #include "observer.h" // include header file for the Observable class
 
 class Player {
+private:
+    int x, y, height, lives; // player's coordinates and height
 public:
-    Player(int x, int y); // constructor that takes in initial x and y coordinates of player
+    Player(int x, int y, int startLives); // constructor that takes in initial x and y coordinates of player
+    bool isAlive();
     int getX();
     int getY();
+    int getLives();
     void setX(int a);
     void setY(int a);
-private:
-    int x, y, height; // player's coordinates and height
+    void setLives(int newLives);
 };
 
 class Bullet {
+private:
     int x, y;
     int velocityY;
 public:
-    Bullet(int y, int x, int velocityY) : x(x), y(y), velocityY(velocityY) {}
-    void move(int velocity) { y = y + velocity; }
-    int getX() const { return x; }
-    int getY() const { return y; }
-    void setY(int newY) { y = newY; }
-    bool isOffScreen() const { return y < 1; }
+    Bullet(int y, int x, int velocityY);
+    int getX();
+    int getY();
+    void setY(int newY);
+    bool isOffScreen();
+    void move(int velocity);
 };
 
 class Alien {
+private:
     int x, y;
     bool alive = true;
 public:
-    Alien(int startY, int startX) : y(startY), x(startX) {}
-    void move(int dx, int dy) { x += dx; y += dy; }
-    int getX() const { return x; }
-    int getY() const { return y; }
-    bool isAlive() const { return alive; }
-    void destroy() { alive = false; }
+    Alien(int startY, int startX);
+    int getX();
+    int getY();
+    bool isAlive();
+    void destroy();
+    void move(int dx, int dy);
 };
 
 class GameModel : public Observable {
+private:
     std::vector<Alien> aliens;
     std::vector<Bullet> bullets;
     std::vector<Bullet> alienBullets;
@@ -59,7 +65,7 @@ public:
     void control_player(wchar_t ch);
     void update_bullets();
     void check_collisions();
-    void shoot() { bullets.emplace_back(player.getY(), player.getX(), -1); } // Specify velocityY to make bullets move upwards
+    void shoot(); // Specify velocityY to make bullets move upwards
     const std::vector<Bullet>& getBullets() const;
     const std::vector<Bullet>& getAlienBullets() const;
     const std::vector<Alien>& getAliens() const;
