@@ -2,49 +2,10 @@
 #define MODEL_GAME_H_
 
 #include "observer.h" // include header file for the Observable class
+#include "models/Alien.h"
+#include "models/Bullet.h"
+#include "models/Player.h"
 
-class Player {
-private:
-    int x, y, height, lives, score = 0; // player's coordinates and height
-public:
-    Player(int x, int y, int startLives); // constructor that takes in initial x and y coordinates of player
-    bool isAlive();
-    int getX() const;
-    int getY() const;
-    int getLives();
-    int getScore();
-    void setX(int a);
-    void setY(int a);
-    void setLives(int newLives);
-    void setScore(int newScore);
-};
-
-class Bullet {
-private:
-    int x, y;
-    int velocityY;
-public:
-    Bullet(int y, int x, int velocityY);
-    int getX() const;
-    int getY() const;
-    void setY(int newY);
-    bool isOffScreen();
-    void move(int velocity);
-};
-
-class Alien {
-private:
-    int x, y, scoreForKill;
-    bool alive = true;
-public:
-    Alien(int startY, int startX, int scoreForKill);
-    int getX() const;
-    int getY() const;
-    int getScoreForKill() const;
-    bool isAlive() const;
-    void destroy();
-    void move(int dx, int dy);
-};
 
 class GameModel : public Observable {
 private:

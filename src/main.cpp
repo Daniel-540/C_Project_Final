@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <iostream>
 
-#include "model_simulator_game.h"
-#include "view_console.h"
-#include "controller_console.h"
+#include "models/GameModel.h"
+#include "view/view_console.h"
+#include "controller/controller_console.h"
 
 int main() {
     GameModel* simplegame = new GameModel();

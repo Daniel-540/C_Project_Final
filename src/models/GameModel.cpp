@@ -1,87 +1,8 @@
-#include "model_simulator_game.h"
+#include "include/models/GameModel.h"
 #include <ncurses.h>
 #include <stdlib.h>
 #include <algorithm> 
 
-Player::Player(int x, int y, int startLives) : x(x), y(y), lives(startLives) {} 
-
-bool Player::isAlive() {
-    return lives > 0;
-}
-
-int Player::getX() const { 
-    return x;
-}
-
-int Player::getY() const { 
-    return y;
-}
-
-int Player::getLives() {
-    return lives;
-}
-
-int Player::getScore() {
-    return score;
-}
-
-void Player::setX(int a) {
-    x = a;
-}
-
-void Player::setY(int a) {
-    y = a;
-}
-
-void Player::setLives(int newLives) {
-    lives = newLives;
-}
-
-void Player::setScore(int newScore) {
-    score = newScore;
-}
-
-Bullet::Bullet(int y, int x, int velocityY) : x(x), y(y), velocityY(velocityY) {}
-
-int Bullet::getX() const {
-    return x;
-}
-
-int Bullet::getY() const {
-    return y;
-}
-
-void Bullet::setY(int newY) {
-    y = newY;
-}
-
-bool Bullet::isOffScreen() {
-    return y < 1;
-}
-
-void Bullet::move(int velocity) { 
-    y = y + velocity; 
-}
-
-Alien::Alien(int startY, int startX, int scoreForKill) : y(startY), x(startX), scoreForKill(scoreForKill) {}
-
-int Alien::getX() const {
-    return x;
-}
-
-int Alien::getY() const {
-    return y;
-}
-
-int Alien::getScoreForKill() const {
-    return scoreForKill;
-}
-
-bool Alien::isAlive() const { return alive; }
-
-void Alien::destroy() { alive = false; }
-
-void Alien::move(int dx, int dy) { x += dx; y += dy; }
 
 GameModel::GameModel(): width(40), height(24), player(width / 2, height - 2, 3) {
     int rows = 3;

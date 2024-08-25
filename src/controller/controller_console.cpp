@@ -1,4 +1,4 @@
-#include "controller_console.h"
+#include "include/controller/controller_console.h"
 
 ConsoleController::ConsoleController(GameModel* model) {
 	this->model = model;
