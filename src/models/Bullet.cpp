@@ -10,6 +10,10 @@ int Bullet::getY() const {
     return y;
 }
 
+int Bullet::getVelocityY() const {
+    return velocityY;
+}
+
 void Bullet::setY(int newY) {
     y = newY;
 }

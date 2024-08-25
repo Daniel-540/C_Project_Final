@@ -9,6 +9,7 @@ public:
     Bullet(int y, int x, int velocityY);
     int getX() const;
     int getY() const;
+    int getVelocityY() const;
     void setY(int newY);
     bool isOffScreen();
     void move(int velocity);

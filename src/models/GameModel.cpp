@@ -4,7 +4,7 @@
 #include <algorithm> 
 #include <vector>
 
-GameModel::GameModel(): width(40), height(24), player(width / 2, height - 2, 3) {
+GameModel::GameModel(): width(40), height(24), player(width / 2, 22, 3) {
     int rows = 3;
     int cols = 8;
     int startX = 2;
@@ -53,7 +53,7 @@ void GameModel::control_player(wchar_t ch)
 
 void GameModel::update_bullets(std::vector<Bullet>& bulletArr) {
     for (auto &bullet : bulletArr) {
-        bullet.move(-1);
+        bullet.move(bullet.getVelocityY());
     }
     bullets.erase(std::remove_if(bullets.begin(), bullets.end(),
         [](Bullet &b) { return b.isOffScreen(); }), bullets.end());
