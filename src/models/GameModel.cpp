@@ -1,8 +1,8 @@
-#include "include/models/GameModel.h"
+#include "../../include/models/GameModel.h"
 #include <ncurses.h>
 #include <stdlib.h>
 #include <algorithm> 
-
+#include <vector>
 
 GameModel::GameModel(): width(40), height(24), player(width / 2, height - 2, 3) {
     int rows = 3;
@@ -14,7 +14,7 @@ GameModel::GameModel(): width(40), height(24), player(width / 2, height - 2, 3) 
 
     for (int r = 0; r < rows; r++) {
         for (int c = 0; c < cols; c++) {
-            aliens.emplace_back(startY + r * spacingY, startX + c * spacingX, 20);
+            aliens.emplace_back(startY + r * spacingY, startX + c * spacingX, 30);
         }
     }
 }
@@ -51,8 +51,8 @@ void GameModel::control_player(wchar_t ch)
 }
 
 
-void GameModel::update_bullets() {
-    for (auto &bullet : bullets) {
+void GameModel::update_bullets(std::vector<Bullet>& bulletArr) {
+    for (auto &bullet : bulletArr) {
         bullet.move(-1);
     }
     bullets.erase(std::remove_if(bullets.begin(), bullets.end(),
@@ -61,7 +61,7 @@ void GameModel::update_bullets() {
 
 void GameModel::simulate_game_step() {
     // Update player bullets
-    update_bullets();
+    update_bullets(bullets);
     
     // Move aliens after a certain delay
     alienMoveCounter++;
@@ -78,17 +78,8 @@ void GameModel::simulate_game_step() {
     }
 
     // Update alien bullets
-    for (auto &bullet : alienBullets) {
-        bullet.move(1);
-    }
-    alienBullets.erase(std::remove_if(alienBullets.begin(), alienBullets.end(),
-        [](Bullet &b) { return b.isOffScreen(); }), alienBullets.end());
+    update_bullets(alienBullets);
 
-    for (auto &alien : aliens) {
-        if (alien.getY() > height) {
-            toggleGameOver();
-        }
-    }
     // Check collisions
     check_collisions();
 
@@ -147,6 +138,10 @@ void GameModel::move_aliens() {
         if (alien.isAlive()) {
             if (needToMoveDown) {
                 alien.move(0, 1); // Move down
+                if (alien.getY() > height) { //Check if any alien hits bottom border
+                    toggleGameOver();
+                    break;
+                }
             } else {
                 alien.move(dir, 0); // Move sideways
             }

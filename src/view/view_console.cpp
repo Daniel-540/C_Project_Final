@@ -1,4 +1,4 @@
-#include "view/view_console.h"
+#include "../../include/view/view_console.h"
 #include <ncurses.h>
 #include <stdlib.h>
 #include <string>

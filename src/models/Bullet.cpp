@@ -1,4 +1,4 @@
-#include "include/models/Bullet.h"
+#include "../../include/models/Bullet.h"
 
 Bullet::Bullet(int y, int x, int velocityY) : x(x), y(y), velocityY(velocityY) {}
 

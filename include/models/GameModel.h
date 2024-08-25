@@ -1,10 +1,11 @@
 #ifndef MODEL_GAME_H_ // header guard to prevent multiple inclusions of the same header file
 #define MODEL_GAME_H_
 
-#include "observer.h" // include header file for the Observable class
-#include "models/Alien.h"
-#include "models/Bullet.h"
-#include "models/Player.h"
+#include "../observer.h" // include header file for the Observable class
+#include "./Alien.h"
+#include "./Bullet.h"
+#include "./Player.h"
+#include <vector>
 
 
 class GameModel : public Observable {
@@ -33,7 +34,7 @@ public:
 
     void simulate_game_step();
     void control_player(wchar_t ch);
-    void update_bullets();
+    void update_bullets(std::vector<Bullet>& bulletArr);
     void check_collisions();
     void shoot(); // Specify velocityY to make bullets move upwards
     const std::vector<Bullet>& getBullets() const;

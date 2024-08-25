@@ -1,4 +1,4 @@
-#include "include/models/Player.h"
+#include "../../include/models/Player.h"
 
 Player::Player(int x, int y, int startLives) : x(x), y(y), lives(startLives) {} 
 

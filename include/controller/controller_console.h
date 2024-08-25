@@ -1,7 +1,7 @@
 #ifndef CONTROLLER_GAME_H_ // header guard to prevent multiple includes
 #define CONTROLLER_GAME_H_
 
-#include "models/GameModel.h" // include the Game Model header file
+#include "../../include/models/GameModel.h" // include the Game Model header file
 #include <ncurses.h> // include the ncurses library for console input/output
 
 class Controller

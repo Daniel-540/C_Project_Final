@@ -1,4 +1,4 @@
-#include "observer.h"
+#include "../include/observer.h"
 #include <vector>
 
 void Observable::addObserver(Observer* observer) {

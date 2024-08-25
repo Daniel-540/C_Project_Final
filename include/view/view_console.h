@@ -1,7 +1,7 @@
 #pragma once  // #pragma once directive added to avoid multiple inclusions of header files
 
-#include "observer.h"  // Include Observer header file
-#include "models/GameModel.h"  // Include GameModel header file
+#include "../observer.h"  // Include Observer header file
+#include "../models/GameModel.h"  // Include GameModel header file
 #include <ncurses.h>
 
 class ConsoleView : public Observer  // Inheriting from Observer class

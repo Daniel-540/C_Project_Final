@@ -1,28 +1,43 @@
-CXX	:= c++
+CXX := c++
 CXXFLAGS := -Wall -std=c++20
 
-# Contain path for any includes (headers)
-# Depending on your platform: Include a path to boost, on linux should be 
-# /usr/local/include, on mac could be /opt/homebrew/include
+# Include paths
 INCLUDES := -I./include -I/opt/homebrew/include 
 
-# Contains libraries we need to (-L is directory search path, -l is lib)
+# Library paths and libraries
 LDFLAGS = -L/usr/local/lib -L/opt/homebrew/lib 
 LDLIBS = -lncurses -lboost_unit_test_framework
 
+# Source directory
 SRCDIR := ./src
-GAME_OBJECTS := controller_console.o model_simulator_game.o observer.o view_console.o
 
-game: $(GAME_OBJECTS) main.o
+BUILD_DIR := ./build
+
+# Automatically find all .cpp files and generate corresponding .o file names
+GAME_SOURCES := $(shell find $(SRCDIR) -name '*.cpp' -not -name 'test_call.cpp')
+GAME_OBJECTS := $(GAME_SOURCES:.cpp=.o)
+
+TEST_SOURCES := $(shell find $(SRCDIR) -name '*.cpp' -not -name 'test_call.cpp')
+TEST_OBJECTS := $(TEST_SOURCES:.cpp=.o)
+
+# Main and test source files
+MAIN_SOURCE := $(SRCDIR)/main.cpp
+MAIN_OBJECT := $(MAIN_SOURCE:.cpp=.o)
+
+TEST_SOURCE := $(SRCDIR)/test_call.cpp
+TEST_OBJECT := $(TEST_SOURCE:.cpp=.o)
+
+# Targets
+game: $(GAME_OBJECTS) $(MAIN_OBJECT)
 	$(CXX) $^ -o $@ $(LDFLAGS) $(LDLIBS)
 
-tests: $(GAME_OBJECTS) test_call.o
+tests: $(TEST_OBJECTS) $(TEST_OBJECT)
 	$(CXX) $^ -o $@ $(LDFLAGS) $(LDLIBS)
-    
-%.o: $(SRCDIR)/%.cpp
+
+# Pattern rule for building .o files from .cpp files, handling subdirectories
+%.o: $(BUILD_DIR)/%.cpp
 	$(CXX) $(INCLUDES) $(CXXFLAGS) -c $^ -o $@
 
+# Clean up generated files
 clean:
-	test ! -f game || rm game
-	test ! -f tests || rm tests
-	rm *.o
+	rm -f game tests $(GAME_OBJECTS) $(TEST_OBJECTS)

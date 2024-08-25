@@ -1,4 +1,4 @@
-#include "include/models/Alien.h"
+#include "../../include/models/Alien.h"
 
 Alien::Alien(int startY, int startX, int scoreForKill) : y(startY), x(startX), scoreForKill(scoreForKill) {}
 
