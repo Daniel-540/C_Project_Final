@@ -5,16 +5,18 @@
 
 class Player {
 private:
-    int x, y, height, lives; // player's coordinates and height
+    int x, y, height, lives, score = 0; // player's coordinates and height
 public:
     Player(int x, int y, int startLives); // constructor that takes in initial x and y coordinates of player
     bool isAlive();
-    int getX();
-    int getY();
+    int getX() const;
+    int getY() const;
     int getLives();
+    int getScore();
     void setX(int a);
     void setY(int a);
     void setLives(int newLives);
+    void setScore(int newScore);
 };
 
 class Bullet {
@@ -23,8 +25,8 @@ private:
     int velocityY;
 public:
     Bullet(int y, int x, int velocityY);
-    int getX();
-    int getY();
+    int getX() const;
+    int getY() const;
     void setY(int newY);
     bool isOffScreen();
     void move(int velocity);
@@ -32,19 +34,21 @@ public:
 
 class Alien {
 private:
-    int x, y;
+    int x, y, scoreForKill;
     bool alive = true;
 public:
-    Alien(int startY, int startX);
-    int getX();
-    int getY();
-    bool isAlive();
+    Alien(int startY, int startX, int scoreForKill);
+    int getX() const;
+    int getY() const;
+    int getScoreForKill() const;
+    bool isAlive() const;
     void destroy();
     void move(int dx, int dy);
 };
 
 class GameModel : public Observable {
 private:
+    bool gameOver = false;
     std::vector<Alien> aliens;
     std::vector<Bullet> bullets;
     std::vector<Bullet> alienBullets;
@@ -53,6 +57,11 @@ private:
     int alienShootDelay = 20; // Delay between alien shots (can adjust for difficulty)
     int alienShootCounter = 0; // Counter to manage shooting speed
     int dir = 1; // 1 means moving right, -1 means moving left
+    int width = 40;
+    int height = 24;
+    Player player;
+    void move_aliens();
+    void alien_shoot();
 
 public:
     GameModel();
@@ -70,12 +79,8 @@ public:
     const std::vector<Bullet>& getAlienBullets() const;
     const std::vector<Alien>& getAliens() const;
 
-private:
-    int width = 40;
-    int height = 24;
-    Player player;
-    void move_aliens();
-    void alien_shoot();
+    bool isGameOver();
+    void toggleGameOver();
 };
 
 #endif // end of header file

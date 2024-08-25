@@ -21,6 +21,10 @@ public:
 
     void drawAlien(int y, int x);
 
+    void drawLives(int lives);
+
+    void drawScore(int score);
+
 private:
     // Textures
     char wallTexture = 'X';  // Wall texture character

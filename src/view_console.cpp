@@ -1,6 +1,7 @@
 #include "view_console.h"
 #include <ncurses.h>
 #include <stdlib.h>
+#include <string>
 
 ConsoleView::ConsoleView(GameModel* model) {
     setup_view();
@@ -27,6 +28,10 @@ void ConsoleView::update() {
 
     // Draw player
     drawPlayer(model->getPlayer().getY(), model->getPlayer().getX());
+
+    drawLives(model->getPlayer().getLives());
+
+    drawScore(model->getPlayer().getScore());
 
     // Draw bullets
     for (const auto &bullet : model->getBullets()) {
@@ -69,3 +74,13 @@ void ConsoleView::drawBullet(int y, int x) {
 void ConsoleView::drawAlien(int y, int x) {
     mvaddch(y, x, 'A');
 }   
+
+void ConsoleView::drawLives(int lives) {
+    std::string livesString = "Lives: "+std::to_string(lives);
+    mvaddstr(1, 45, livesString.c_str());
+}
+
+void ConsoleView::drawScore(int score) {
+    std::string scoreString = "Score: "+std::to_string(score);
+    mvaddstr(3, 45, scoreString.c_str());
+}

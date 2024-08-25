@@ -9,16 +9,20 @@ bool Player::isAlive() {
     return lives > 0;
 }
 
-int Player::getX() { 
+int Player::getX() const { 
     return x;
 }
 
-int Player::getY() { 
+int Player::getY() const { 
     return y;
 }
 
 int Player::getLives() {
     return lives;
+}
+
+int Player::getScore() {
+    return score;
 }
 
 void Player::setX(int a) {
@@ -33,13 +37,17 @@ void Player::setLives(int newLives) {
     lives = newLives;
 }
 
+void Player::setScore(int newScore) {
+    score = newScore;
+}
+
 Bullet::Bullet(int y, int x, int velocityY) : x(x), y(y), velocityY(velocityY) {}
 
-int Bullet::getX() {
+int Bullet::getX() const {
     return x;
 }
 
-int Bullet::getY() {
+int Bullet::getY() const {
     return y;
 }
 
@@ -55,24 +63,27 @@ void Bullet::move(int velocity) {
     y = y + velocity; 
 }
 
-Alien::Alien(int startY, int startX) : y(startY), x(startX) {}
+Alien::Alien(int startY, int startX, int scoreForKill) : y(startY), x(startX), scoreForKill(scoreForKill) {}
 
-int Alien::getX() {
+int Alien::getX() const {
     return x;
 }
 
-int Alien::getY() {
+int Alien::getY() const {
     return y;
 }
 
-bool Alien::isAlive() { return alive; }
+int Alien::getScoreForKill() const {
+    return scoreForKill;
+}
+
+bool Alien::isAlive() const { return alive; }
 
 void Alien::destroy() { alive = false; }
 
 void Alien::move(int dx, int dy) { x += dx; y += dy; }
 
-GameModel::GameModel()
-    : width(40), height(24), player(width / 2, height - 2) {
+GameModel::GameModel(): width(40), height(24), player(width / 2, height - 2, 3) {
     int rows = 3;
     int cols = 8;
     int startX = 2;
@@ -82,7 +93,7 @@ GameModel::GameModel()
 
     for (int r = 0; r < rows; r++) {
         for (int c = 0; c < cols; c++) {
-            aliens.emplace_back(startY + r * spacingY, startX + c * spacingX);
+            aliens.emplace_back(startY + r * spacingY, startX + c * spacingX, 20);
         }
     }
 }
@@ -164,6 +175,7 @@ void GameModel::check_collisions() {
         for (auto &alien : aliens) {
             if (alien.isAlive() && bullet.getX() == alien.getX() && bullet.getY() == alien.getY()) {
                 alien.destroy();
+                player.setScore(player.getScore()+alien.getScoreForKill());
                 // Remove bullet after collision
                 bullet.setY(-1); // Mark bullet as off-screen
             }
@@ -171,6 +183,16 @@ void GameModel::check_collisions() {
     }
     bullets.erase(std::remove_if(bullets.begin(), bullets.end(),
         [](Bullet &b) { return b.isOffScreen(); }), bullets.end());
+
+    for (auto &alienBullet : alienBullets) {
+        if (alienBullet.getX() == player.getX() && alienBullet.getY() == player.getY()) {
+            player.setLives(player.getLives()-1);
+            if (!player.isAlive()) {
+                toggleGameOver();
+            }
+            alienBullet.setY(-1);
+        }
+    }
 }
 
 void GameModel::shoot() { bullets.emplace_back(player.getY(), player.getX(), -1); }
@@ -212,4 +234,12 @@ void GameModel::alien_shoot() {
             alienBullets.emplace_back(alien.getY() + 1, alien.getX(), 1);
         }
     }
+}
+
+bool GameModel::isGameOver() {
+    return gameOver;
+}
+
+void GameModel::toggleGameOver() {
+    gameOver = !gameOver;
 }
