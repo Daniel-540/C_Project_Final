@@ -163,6 +163,11 @@ void GameModel::simulate_game_step() {
     alienBullets.erase(std::remove_if(alienBullets.begin(), alienBullets.end(),
         [](Bullet &b) { return b.isOffScreen(); }), alienBullets.end());
 
+    for (auto &alien : aliens) {
+        if (alien.getY() > height) {
+            toggleGameOver();
+        }
+    }
     // Check collisions
     check_collisions();
 
@@ -191,6 +196,12 @@ void GameModel::check_collisions() {
                 toggleGameOver();
             }
             alienBullet.setY(-1);
+        }
+    }
+
+    for (auto &alien : aliens) {
+        if (alien.getX() == player.getX() && alien.getY() == player.getY()) {
+            toggleGameOver();
         }
     }
 }

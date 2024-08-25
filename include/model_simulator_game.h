@@ -48,10 +48,10 @@ public:
 
 class GameModel : public Observable {
 private:
-    bool gameOver = false;
     std::vector<Alien> aliens;
     std::vector<Bullet> bullets;
     std::vector<Bullet> alienBullets;
+    Player player;
     int alienMoveDelay = 5;  // Delay between alien moves (can adjust for difficulty)
     int alienMoveCounter = 0; // Counter to manage movement speed
     int alienShootDelay = 20; // Delay between alien shots (can adjust for difficulty)
@@ -59,7 +59,7 @@ private:
     int dir = 1; // 1 means moving right, -1 means moving left
     int width = 40;
     int height = 24;
-    Player player;
+    bool gameOver = false;
     void move_aliens();
     void alien_shoot();
 
