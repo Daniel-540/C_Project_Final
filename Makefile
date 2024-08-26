@@ -17,7 +17,7 @@ BUILD_DIR := ./build
 GAME_SOURCES := $(shell find $(SRCDIR) -name '*.cpp' -not -name 'test_call.cpp')
 GAME_OBJECTS := $(GAME_SOURCES:.cpp=.o)
 
-TEST_SOURCES := $(shell find $(SRCDIR) -name '*.cpp' -not -name 'test_call.cpp')
+TEST_SOURCES := $(shell find $(SRCDIR) -name 'test_call.cpp')
 TEST_OBJECTS := $(TEST_SOURCES:.cpp=.o)
 
 # Main and test source files
