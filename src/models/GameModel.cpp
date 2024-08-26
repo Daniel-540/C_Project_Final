@@ -44,10 +44,6 @@ void GameModel::setMsg(std::string newMsg) { msg = newMsg; }  // Set a new game 
 // Get the current direction of alien movement.
 int GameModel::getDir() { return dir; }  // Return the direction in which aliens are moving.
 
-bool GameModel::shouldBotPlay() {
-    return (bot->isEnabled() && !gamePaused);
-}
-
 void GameModel::movePlayerLeft() {
     if (!gamePaused) {
         player.setX(player.getX() - 1);
