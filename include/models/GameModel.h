@@ -66,6 +66,9 @@ public:
 
     int getDir();
 
+    // methods for controllers
+    void movePlayerLeft();
+
     bool isGameOver();
     void setGameOver();
     bool isGamePaused();

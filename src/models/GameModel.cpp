@@ -5,6 +5,7 @@
 #include <algorithm> 
 #include <vector>
 #include <string>
+#include "GameModel.h"
 
 // Constructor for the GameModel class, initializing game parameters.
 GameModel::GameModel() : width(40), height(24), player(width / 2, 22, 3), bot(new Bot(this)) {
@@ -42,6 +43,46 @@ void GameModel::setMsg(std::string newMsg) { msg = newMsg; }  // Set a new game 
 
 // Get the current direction of alien movement.
 int GameModel::getDir() { return dir; }  // Return the direction in which aliens are moving.
+
+// L
+void GameModel::movePlayerLeft() {
+    if (!gamePaused && !bot->isEnabled()) {
+        player.setX(player.getX() - 1);
+        preventMovingOffScreen();
+    }
+}
+
+// R
+void GameModel::movePlayerRight() {
+    if (!gamePaused && !bot->isEnabled()) {
+        player.setX(player.getX() + 1);
+        preventMovingOffScreen();
+    }
+}
+
+// ' '
+void GameModel::playerShoot() {
+    if (!gamePaused && !bot->isEnabled()) {
+        shoot(); 
+    }
+}
+
+// C
+void GameModel::continueGame() {
+    setGamePaused(false);
+}
+
+// B
+void GameModel::toggleBot() {
+    bot->toggle();
+}
+
+// Prevent the player from moving off-screen.
+void GameModel::preventMovingOffScreen() {
+    if (player.getX() < 1) player.setX(1);  // Left boundary check.
+    if (player.getX() > width - 2) player.setX(width - 2);  // Right boundary check.
+}
+
 
 // Handle player control inputs and bot actions.
 void GameModel::control_player(wchar_t ch) {   
