@@ -14,8 +14,4 @@ int Alien::getScoreForKill() const {
     return scoreForKill;
 }
 
-bool Alien::isAlive() const { return alive; }
-
-void Alien::destroy() { alive = false; }
-
 void Alien::move(int dx, int dy) { x += dx; y += dy; }

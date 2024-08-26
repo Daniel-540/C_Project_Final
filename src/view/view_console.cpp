@@ -41,9 +41,7 @@ void ConsoleView::update() {
 
         // Draw aliens
         for (const auto &alien : model->getAliens()) {
-            if (alien.isAlive()) {
-                drawAlien(alien.getY(), alien.getX());
-            }
+            drawAlien(alien.getY(), alien.getX());
         }
 
         for (const auto &powerUp : model->getPowerUps()) {
@@ -52,6 +50,8 @@ void ConsoleView::update() {
     } else {
         printMessage(1, 5, "Game Over");
     }
+
+    
 
     drawLevel(model->getLevel());
 

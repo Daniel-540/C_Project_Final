@@ -20,6 +20,8 @@ private:
     int alienMoveCounter = 0; // Counter to manage movement speed
     int alienShootDelay = 20; // Delay between alien shots (can adjust for difficulty)
     int alienShootCounter = 0; // Counter to manage shooting speed
+    int bulletMoveDelay = 6;
+    int bulletMoveCounter = 0;
     int powerUpMoveDelay = 2;
     int powerUpMoveCounter = 0;
     int dir = 1; // 1 means moving right, -1 means moving left
@@ -30,6 +32,7 @@ private:
     void move_aliens();
     void alien_shoot();
     void powerUpMove();
+    void spawnAliens(int rows);
 
 public:
     GameModel();
@@ -38,6 +41,8 @@ public:
     int getGameHeight();
     int getLevel();
     void setLevel(int newLevel);
+    void setAlienShootDelay(int delay);
+    void setBulletMoveDelay(int delay);
     void newLevel();
     Player& getPlayer();
 

@@ -3,20 +3,10 @@
 #include <stdlib.h>
 #include <algorithm> 
 #include <vector>
+#include <string>
 
 GameModel::GameModel(): width(40), height(24), player(width / 2, 22, 3) {
-    int rows = 3;
-    int cols = 8;
-    int startX = 2;
-    int startY = 2;
-    int spacingX = 4;
-    int spacingY = 2;
-
-    for (int r = 0; r < rows; r++) {
-        for (int c = 0; c < cols; c++) {
-            aliens.emplace_back(startY + r * spacingY, startX + c * spacingX, 30);
-        }
-    }
+    spawnAliens(1);
 }
 
 const std::vector<Bullet>& GameModel::getBullets() const { return bullets; }
@@ -24,20 +14,15 @@ const std::vector<Bullet>& GameModel::getAlienBullets() const { return alienBull
 const std::vector<Alien>& GameModel::getAliens() const { return aliens; }
 const std::vector<PowerUp>& GameModel::getPowerUps() const { return powerUps; }
 
-int GameModel::getGameWidth() { 
-    return width; 
-}
-
-int GameModel::getGameHeight() { 
-    return height; 
-}
-
-Player& GameModel::getPlayer() { 
-    return player; 
-}
+int GameModel::getGameWidth() { return width; }
+int GameModel::getGameHeight() { return height; }
+Player& GameModel::getPlayer() { return player; }
 
 int GameModel::getLevel() {return level;}
 void GameModel::setLevel(int newLevel) {level = newLevel;}
+
+void GameModel::setAlienShootDelay(int delay) {alienShootDelay = delay;}
+void GameModel::setBulletMoveDelay(int delay) {bulletMoveDelay = delay;}
 
 void GameModel::control_player(wchar_t ch)
 {
@@ -69,7 +54,7 @@ void GameModel::update_bullets(std::vector<Bullet>& bulletArr) {
 void GameModel::simulate_game_step() {
     if(!gameOver) {
         if(aliens.size() == 0) {
-            newLevel()
+            newLevel();
         }
         
         // Update player bullets
@@ -96,7 +81,11 @@ void GameModel::simulate_game_step() {
         }
 
         // Update alien bullets
-        update_bullets(alienBullets);
+        bulletMoveCounter++;
+        if (bulletMoveCounter >= bulletMoveDelay) {
+            update_bullets(alienBullets);
+            bulletMoveCounter = 0;
+        }
 
         // Check collisions
         check_collisions();
@@ -203,4 +192,26 @@ bool GameModel::isGameOver() {
 
 void GameModel::setGameOver() {
     gameOver = true;
+}
+
+void GameModel::spawnAliens(int rows) {
+    int cols = 8;
+    int startX = 2;
+    int startY = 2;
+    int spacingX = 4;
+    int spacingY = 2;
+    int score = level*(100/alienShootDelay);
+
+    for (int r = 0; r < rows; r++) {
+        for (int c = 0; c < cols; c++) {
+            aliens.emplace_back(startY + r * spacingY, startX + c * spacingX, score);
+        }
+    }
+}
+
+void GameModel::newLevel() {
+    setLevel(level+1);
+    setAlienShootDelay(std::max(21-level, 1));
+    setBulletMoveDelay(std::max(7-level, 0));
+    spawnAliens(std::min(level, 4));
 }
