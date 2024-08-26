@@ -4,13 +4,12 @@
 
 class PowerUp {
 private:
-    int x, y, velocityY;
+    int x, y;
 
 public:
-    PowerUp(int startX, int startY, int velocityY);
+    PowerUp(int startX, int startY);
     int getX() const;
     int getY() const;
-    int getVelocityY() const;
     bool isOffScreen(int height);
     void move();
 };

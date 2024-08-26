@@ -1,11 +1,12 @@
 #include "../../include/models/GameModel.h"
+#include "../../include/models/Bot.h"
 #include <ncurses.h>
 #include <stdlib.h>
 #include <algorithm> 
 #include <vector>
 #include <string>
 
-GameModel::GameModel(): width(40), height(24), player(width / 2, 22, 3) {
+GameModel::GameModel(): width(40), height(24), player(width / 2, 22, 3), bot(new Bot(this)) {
     spawnAliens(1);
 }
 
@@ -24,14 +25,30 @@ void GameModel::setLevel(int newLevel) {level = newLevel;}
 void GameModel::setAlienShootDelay(int delay) {alienShootDelay = delay;}
 void GameModel::setBulletMoveDelay(int delay) {bulletMoveDelay = delay;}
 
+bool GameModel::isGamePaused() {return gamePaused;}
+void GameModel::setGamePaused(bool paused) {gamePaused = paused;}
+std::string GameModel::getMsg() {return msg;}
+void GameModel::setMsg(std::string newMsg) {msg = newMsg;} 
+
 void GameModel::control_player(wchar_t ch)
-{
-    if (ch == KEY_LEFT) {
-        player.setX(player.getX() - 1);
-    } else if (ch == KEY_RIGHT) {
-        player.setX(player.getX() + 1);
-    } else if (ch == ' ') { // Space bar as shooting key
-        shoot(); 
+{   
+    if (bot->isEnabled() && !gamePaused) {
+        bot->play();
+    }
+    if (!gamePaused && !bot->isEnabled()) {
+        if (ch == 'L') {
+            player.setX(player.getX() - 1);
+        } else if (ch == 'R') {
+            player.setX(player.getX() + 1);
+        } else if (ch == ' ') { // Space bar as shooting key
+            shoot(); 
+        }
+    }
+
+    if (ch == 'C') {
+        setGamePaused(false);
+    } else if (ch == 'B') {
+        bot->toggle();
     }
 
     // Prevent the player from moving off-screen
@@ -41,12 +58,10 @@ void GameModel::control_player(wchar_t ch)
 
 
 void GameModel::update_bullets(std::vector<Bullet>& bulletArr) {
-    for (auto &bullet : bulletArr) {
-        bullet.move(bullet.getVelocityY());
-    }
-    for (int i = 0; i < bullets.size(); i++) {
-        if (bullets[i].isOffScreen(height)) {
-            bullets.erase(bullets.begin()+i);
+    for (int i = 0; i < bulletArr.size(); i++) {
+        bulletArr[i].move(bulletArr[i].getVelocityY());
+        if (bulletArr[i].isOffScreen(height)) {
+            bulletArr.erase(bulletArr.begin()+i);
         }
     }
 }
@@ -54,45 +69,52 @@ void GameModel::update_bullets(std::vector<Bullet>& bulletArr) {
 void GameModel::simulate_game_step() {
     if(!gameOver) {
         if(aliens.size() == 0) {
+            setMsg("");
+            setGamePaused(true);
+            bullets.clear();
+            alienBullets.clear();
+            powerUps.clear();
             newLevel();
         }
-        
-        // Update player bullets
-        update_bullets(bullets);
-        
-        // Move aliens after a certain delay
-        alienMoveCounter++;
-        if (alienMoveCounter >= alienMoveDelay) {
-            move_aliens();
-            alienMoveCounter = 0;
+
+        if (!gamePaused) {
+            // Update player bullets
+            update_bullets(bullets);
+            
+            // Move aliens after a certain delay
+            alienMoveCounter++;
+            if (alienMoveCounter > alienMoveDelay) {
+                move_aliens();
+                alienMoveCounter = 0;
+            }
+
+            // Aliens shoot after a certain delay
+            alienShootCounter++;
+            if (alienShootCounter > alienShootDelay) {
+                alien_shoot();
+                alienShootCounter = 0;
+            }
+
+            powerUpMoveCounter++;
+            if (powerUpMoveCounter > powerUpMoveDelay) {
+                powerUpMove();
+                powerUpMoveCounter = 0;
+            }
+
+            // Update alien bullets
+            bulletMoveCounter++;
+            if (bulletMoveCounter > bulletMoveDelay) {
+                update_bullets(alienBullets);
+                bulletMoveCounter = 0;
+            }
+
+            // Check collisions
+            check_collisions();
+
         }
-
-        // Aliens shoot after a certain delay
-        alienShootCounter++;
-        if (alienShootCounter >= alienShootDelay) {
-            alien_shoot();
-            alienShootCounter = 0;
-        }
-
-        powerUpMoveCounter++;
-        if (powerUpMoveCounter >= powerUpMoveDelay) {
-            powerUpMove();
-            powerUpMoveCounter = 0;
-        }
-
-        // Update alien bullets
-        bulletMoveCounter++;
-        if (bulletMoveCounter >= bulletMoveDelay) {
-            update_bullets(alienBullets);
-            bulletMoveCounter = 0;
-        }
-
-        // Check collisions
-        check_collisions();
-
-        // Notify view of updates
     }
 
+    // Notify view of updates
     notifyUpdate();
 }
 
@@ -103,7 +125,7 @@ void GameModel::check_collisions() {
             if (bullet.getX() == alien.getX() && bullet.getY() == alien.getY()) {
                 player.setScore(player.getScore()+alien.getScoreForKill());
                 if (rand() % 100 < 20) {
-                    powerUps.emplace_back(alien.getX(), alien.getY(), 1);
+                    powerUps.emplace_back(alien.getX(), alien.getY());
                 }
                 // Remove bullet after collision
                 bullet.setY(-1); // Mark bullet as off-screen
@@ -211,7 +233,7 @@ void GameModel::spawnAliens(int rows) {
 
 void GameModel::newLevel() {
     setLevel(level+1);
-    setAlienShootDelay(std::max(21-level, 1));
+    setAlienShootDelay(std::max(21-level, 0));
     setBulletMoveDelay(std::max(7-level, 0));
     spawnAliens(std::min(level, 4));
 }

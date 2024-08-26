@@ -17,7 +17,7 @@ void ConsoleView::update() {
     erase();
     refresh();
     if (! model->isGameOver()) {
-            // Draw walls
+        // Draw walls
         for (int i = 0; i < model->getGameWidth(); i++) {
             mvaddch(0, i, wallTexture);
         }
@@ -25,33 +25,40 @@ void ConsoleView::update() {
             mvaddch(i, 0, wallTexture);
             mvaddch(i, model->getGameWidth() - 1, wallTexture);
         }
-
         // Draw player
         drawPlayer(model->getPlayer().getY(), model->getPlayer().getX());
+        if (! model->isGamePaused()) {
 
-        // Draw bullets
-        for (const auto &bullet : model->getBullets()) {
-            drawBullet(bullet.getY(), bullet.getX());
-        }
+            // Draw bullets
+            for (const auto &bullet : model->getBullets()) {
+                drawBullet(bullet.getY(), bullet.getX());
+            }
 
-        // Draw alien bullets
-        for (const auto &bullet : model->getAlienBullets()) {
-            drawBullet(bullet.getY(), bullet.getX());
-        }
+            // Draw alien bullets
+            for (const auto &bullet : model->getAlienBullets()) {
+                drawBullet(bullet.getY(), bullet.getX());
+            }
 
-        // Draw aliens
-        for (const auto &alien : model->getAliens()) {
-            drawAlien(alien.getY(), alien.getX());
-        }
+            // Draw aliens
+            for (const auto &alien : model->getAliens()) {
+                drawAlien(alien.getY(), alien.getX());
+            }
 
-        for (const auto &powerUp : model->getPowerUps()) {
-            drawPowerUp(powerUp.getY(), powerUp.getX());
+            for (const auto &powerUp : model->getPowerUps()) {
+                drawPowerUp(powerUp.getY(), powerUp.getX());
+            }
+
+        } else {
+            std::string msg = "Level "+std::to_string(model->getLevel()-1)+" finished";
+            printMessage(5, 10, msg);
+            printMessage(7, 10, "Press C to continue!");
         }
     } else {
-        printMessage(1, 5, "Game Over");
+        printMessage(5, 10, "Game Over");
+        printMessage(7, 10, "Press Q to quit the game!");
     }
 
-    
+    printMessage(7, 45, model->getMsg());
 
     drawLevel(model->getLevel());
 
@@ -101,7 +108,7 @@ void ConsoleView::drawLevel(int level) {
 }
 
 void ConsoleView::drawPowerUp(int y, int x) {
-    mvaddch(y, x, '1');
+    mvaddch(y, x, '@');
 }
 
 void ConsoleView::printMessage(int y, int x, std::string msg) {
