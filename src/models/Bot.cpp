@@ -40,7 +40,7 @@ void Bot::play() {
                                         [](const PowerUp& a, const PowerUp& b) {
                                             return a.getY() > b.getY();
                                         });
-                if (player.getY() - nearestAlien->getY() > 5 && (player.getY() - nearestPowerUp->getY() <= (int)(std::abs(player.getX() - nearestPowerUp->getX())/4))) {
+                if (player.getY() - nearestAlien->getY() > 5 && (player.getY() - nearestPowerUp->getY() <= std::max((int)(std::abs(player.getX() - nearestPowerUp->getX())/4), 5))) {
                     direction = nearestPowerUp->getX();
                 } else {
                     direction = alienPositionX+((int)(static_cast<float>(player.getY()-alienPositionY)/5.0))*model->getDir();
