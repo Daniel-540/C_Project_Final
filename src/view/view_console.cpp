@@ -60,7 +60,7 @@ void ConsoleView::update() {
         printMessage(7, 10, "Press 'Q' to quit the game!");
     }
 
-    printMessage(7, 45, model->getMsg());
+    printMessage(11, 45, model->getMsg());
 
     drawLevel(model->getLevel());
 

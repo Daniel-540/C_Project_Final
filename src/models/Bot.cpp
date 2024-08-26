@@ -12,33 +12,43 @@ void Bot::play() {
     if (checkBullets(player.getX())) {
         if (checkBullets(player.getX()+1) || (player.getX()+1 >= model->getGameWidth())) {
             if (checkBullets(player.getX()-1) || player.getX()-1 <= 0) {
-                model->setMsg("Error");
+                //model->setMsg("[Bot]: couldnt dodge");
             } else {
-                model->setMsg("dodging left");
+                //model->setMsg("[Bot]: dodging left");
                 player.setX(player.getX()-1);
             }
 
         } else {
-            model->setMsg("dodging right");
+            //model->setMsg("[Bot]: dodging right");
             model->getPlayer().setX(model->getPlayer().getX()+1);
         }
     } else {
-        if (shootCounter >= 2) {
+        if (shootCounter >= 5) {
             model->shoot();
             shootCounter = 0;
         } else {
-            int alienPositionX = model->getAliens()[0].getX();
-            int alienPositionY = model->getAliens()[0].getY();
-            int direction = alienPositionX;
-            if (model->getPlayer().getY()-alienPositionY >= 20) {
-                direction+=4*model->getDir();
-            } else if (model->getPlayer().getY()-alienPositionY >= 15) {
-                direction+=3*model->getDir();
-            } else if (model->getPlayer().getY()-alienPositionY >= 10) {
-                direction+=2*model->getDir();
-            } else if (model->getPlayer().getY()-alienPositionY >= 5) {
-                direction+=1*model->getDir();
+            auto nearestAlien = std::min_element(model->getAliens().begin(), model->getAliens().end(),
+                                        [](const Alien& a, const Alien& b) {
+                                            return a.getY() > b.getY();
+                                        });
+            int alienPositionX = nearestAlien->getX();
+            int alienPositionY = nearestAlien->getY();
+            int direction;
+            
+            if (model->getPowerUps().size() > 0) {
+                auto nearestPowerUp = std::min_element(model->getPowerUps().begin(), model->getPowerUps().end(),
+                                        [](const PowerUp& a, const PowerUp& b) {
+                                            return a.getY() > b.getY();
+                                        });
+                if (player.getY() - nearestAlien->getY() > 5 && (player.getY() - nearestPowerUp->getY() <= std::abs(player.getX() - nearestPowerUp->getX())+2)) {
+                    direction = nearestPowerUp->getX();
+                } else {
+                    direction = alienPositionX*((player.getY()-alienPositionY)/5)*model->getDir();
+                }
+            } else {
+                direction = alienPositionX+((player.getY()-alienPositionY)/5)*model->getDir();
             }
+            model->setMsg("[Bot] aiming at: "+std::to_string(direction));
 
             if (direction < model->getPlayer().getX() && !checkBullets(player.getX()-1)) {
                 model->getPlayer().setX(model->getPlayer().getX()-1);
