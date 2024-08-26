@@ -66,6 +66,10 @@ public:
 
     int getDir();
 
+    bool shouldBotPlay();
+
+    bool shouldPlayerPlay();
+
     // methods for controllers
     void movePlayerLeft();
 
