@@ -70,6 +70,23 @@ public:
     void setGameOver();
     bool isGamePaused();
     void setGamePaused(bool paused);
+
+    //following functions only for testing
+     void addAlien(const Alien& alien) {
+        aliens.push_back(alien);
+    }
+
+    void addAlienBullet(const Bullet& bullet) {
+        alienBullets.push_back(bullet);
+    }
+
+    void addPowerUp(const PowerUp& powerUp) {
+        powerUps.push_back(powerUp);
+    }
+
+    void clearAliens() {
+        aliens.clear();
+    }
 };
 
 #endif // end of header file

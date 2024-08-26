@@ -1,5 +1,6 @@
 #include "../../include/models/Bot.h"
 #include "../../include/models/Player.h"
+#include <algorithm> // Include the <algorithm> header for std::min_element.
 
 // Constructor for the Bot class, initializing with a reference to the game model.
 Bot::Bot(GameModel* model) : model(model) {}
