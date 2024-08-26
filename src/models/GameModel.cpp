@@ -5,10 +5,10 @@
 #include <algorithm> 
 #include <vector>
 #include <string>
-#include "GameModel.h"
+#include <cmath>
 
 // Constructor for the GameModel class, initializing game parameters.
-GameModel::GameModel() : width(40), height(24), player(width / 2, 22, 3), bot(new Bot(this)) {
+GameModel::GameModel() : width(40), height(24), player(20, 22, 3), bot(new Bot(this)) {
     spawnAliens(1); // Spawn the initial set of aliens.
 }
 
@@ -46,6 +46,9 @@ int GameModel::getDir() { return dir; }  // Return the direction in which aliens
 
 // L
 void GameModel::movePlayerLeft() {
+    if (bot->isEnabled() && !gamePaused) {
+        bot->play();  // If the bot is enabled and the game is not paused, let the bot play.
+    }
     if (!gamePaused && !bot->isEnabled()) {
         player.setX(player.getX() - 1);
         preventMovingOffScreen();
@@ -54,6 +57,9 @@ void GameModel::movePlayerLeft() {
 
 // R
 void GameModel::movePlayerRight() {
+    if (bot->isEnabled() && !gamePaused) {
+        bot->play();  // If the bot is enabled and the game is not paused, let the bot play.
+    }
     if (!gamePaused && !bot->isEnabled()) {
         player.setX(player.getX() + 1);
         preventMovingOffScreen();
@@ -62,6 +68,9 @@ void GameModel::movePlayerRight() {
 
 // ' '
 void GameModel::playerShoot() {
+    if (bot->isEnabled() && !gamePaused) {
+        bot->play();  // If the bot is enabled and the game is not paused, let the bot play.
+    }
     if (!gamePaused && !bot->isEnabled()) {
         shoot(); 
     }
@@ -70,6 +79,9 @@ void GameModel::playerShoot() {
 // C
 void GameModel::continueGame() {
     setGamePaused(false);
+    if (bot->isEnabled() && !gamePaused) {
+        bot->play();  // If the bot is enabled and the game is not paused, let the bot play.
+    }
 }
 
 // B

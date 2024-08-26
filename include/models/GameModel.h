@@ -69,6 +69,16 @@ public:
     // methods for controllers
     void movePlayerLeft();
 
+    void movePlayerRight();
+
+    void playerShoot();
+
+    void continueGame();
+
+    void toggleBot();
+
+    void preventMovingOffScreen();
+
     bool isGameOver();
     void setGameOver();
     bool isGamePaused();

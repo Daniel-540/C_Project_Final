@@ -5,18 +5,18 @@ ConsoleController::ConsoleController(GameModel* model) {
 };
 
 // !!! NEEDS REWORK: Anweisungen an Model sollen allgemein sein, es soll nicht die Eingabe weitergeleitet werden,
-// damit Model und Controller unabhängig voneinander sind.
+// damit Model und Controller unabhängig voneinander sind. !!!
 wchar_t ConsoleController::getInput() {
     wchar_t ch = getch();
     wchar_t newCh;
-    if (ch == KEY_LEFT) {newCh = 'L';} 
-    else if (ch == KEY_RIGHT) {newCh = 'R';}
-    else if (ch == ' ') {newCh = ' ';}
+    if (ch == KEY_LEFT) {model->movePlayerLeft();} 
+    else if (ch == KEY_RIGHT) {model->movePlayerRight();}
+    else if (ch == ' ') {model->playerShoot();}
     else if (ch == 'q') {newCh = 'q';}
-    else if (ch == 'c') {newCh = 'C';}
-    else if (ch == 'b') {newCh = 'B';}
-    model->control_player(newCh);
-    return newCh; // Removed the duplicate return statement
+    else if (ch == 'c') {model->continueGame();}
+    else if (ch == 'b') {model->toggleBot();}
+    //model->control_player(newCh);
+    return newCh; 
 }
 
 
