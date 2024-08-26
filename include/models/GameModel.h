@@ -64,6 +64,8 @@ public:
     std::string getMsg();
     void setMsg(std::string newMsg);
 
+    int getDir();
+
     bool isGameOver();
     void setGameOver();
     bool isGamePaused();

@@ -23,15 +23,26 @@ void Bot::play() {
             model->getPlayer().setX(model->getPlayer().getX()+1);
         }
     } else {
-        model->setMsg("");
-        if (shootCounter >= 5) {
+        if (shootCounter >= 2) {
             model->shoot();
             shootCounter = 0;
         } else {
-            int direction = model->getAliens()[0].getX();
+            int alienPositionX = model->getAliens()[0].getX();
+            int alienPositionY = model->getAliens()[0].getY();
+            int direction = alienPositionX;
+            if (model->getPlayer().getY()-alienPositionY >= 20) {
+                direction+=4*model->getDir();
+            } else if (model->getPlayer().getY()-alienPositionY >= 15) {
+                direction+=3*model->getDir();
+            } else if (model->getPlayer().getY()-alienPositionY >= 10) {
+                direction+=2*model->getDir();
+            } else if (model->getPlayer().getY()-alienPositionY >= 5) {
+                direction+=1*model->getDir();
+            }
+
             if (direction < model->getPlayer().getX() && !checkBullets(player.getX()-1)) {
                 model->getPlayer().setX(model->getPlayer().getX()-1);
-            } else if (!checkBullets(player.getX()+1)) {
+            } else if (direction > model->getPlayer().getX() && !checkBullets(player.getX()+1)) {
                 model->getPlayer().setX(model->getPlayer().getX()+1);
             }
         }

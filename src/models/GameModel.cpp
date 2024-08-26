@@ -30,6 +30,8 @@ void GameModel::setGamePaused(bool paused) {gamePaused = paused;}
 std::string GameModel::getMsg() {return msg;}
 void GameModel::setMsg(std::string newMsg) {msg = newMsg;} 
 
+int GameModel::getDir() {return dir;}
+
 void GameModel::control_player(wchar_t ch)
 {   
     if (bot->isEnabled() && !gamePaused) {
@@ -124,7 +126,7 @@ void GameModel::check_collisions() {
             auto alien = aliens[i];
             if (bullet.getX() == alien.getX() && bullet.getY() == alien.getY()) {
                 player.setScore(player.getScore()+alien.getScoreForKill());
-                if (rand() % 100 < 20) {
+                if (rand() % 100 < 15) {
                     powerUps.emplace_back(alien.getX(), alien.getY());
                 }
                 // Remove bullet after collision
@@ -153,7 +155,7 @@ void GameModel::check_collisions() {
     for (int i = 0; i < powerUps.size(); i++) {
         if (powerUps[i].getX() == player.getX() && powerUps[i].getY() == player.getY()) {
             powerUps.erase(powerUps.begin()+i);
-            player.setLives(player.getLives()+2);
+            player.setLives(player.getLives()+1);
         }
     }
 }
@@ -233,7 +235,7 @@ void GameModel::spawnAliens(int rows) {
 
 void GameModel::newLevel() {
     setLevel(level+1);
-    setAlienShootDelay(std::max(21-level, 0));
+    setAlienShootDelay(std::max(21-level, 1));
     setBulletMoveDelay(std::max(7-level, 0));
     spawnAliens(std::min(level, 4));
 }

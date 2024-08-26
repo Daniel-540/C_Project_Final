@@ -25,6 +25,8 @@ void ConsoleView::update() {
             mvaddch(i, 0, wallTexture);
             mvaddch(i, model->getGameWidth() - 1, wallTexture);
         }
+
+        printMessage(9, 45, "Enable Bot with 'B'");
         // Draw player
         drawPlayer(model->getPlayer().getY(), model->getPlayer().getX());
         if (! model->isGamePaused()) {
@@ -51,11 +53,11 @@ void ConsoleView::update() {
         } else {
             std::string msg = "Level "+std::to_string(model->getLevel()-1)+" finished";
             printMessage(5, 10, msg);
-            printMessage(7, 10, "Press C to continue!");
+            printMessage(7, 10, "Press 'C' to continue!");
         }
     } else {
         printMessage(5, 10, "Game Over");
-        printMessage(7, 10, "Press Q to quit the game!");
+        printMessage(7, 10, "Press 'Q' to quit the game!");
     }
 
     printMessage(7, 45, model->getMsg());
