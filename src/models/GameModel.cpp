@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <cmath>
+#include "GameModel.h"
 
 // Constructor for the GameModel class, initializing game parameters.
 GameModel::GameModel() : width(40), height(24), player(20, 22, 3), bot(new Bot(this)) {
@@ -44,11 +45,19 @@ void GameModel::setMsg(std::string newMsg) { msg = newMsg; }  // Set a new game 
 // Get the current direction of alien movement.
 int GameModel::getDir() { return dir; }  // Return the direction in which aliens are moving.
 
+bool GameModel::shouldBotPlay() {
+    return (bot->isEnabled() && !gamePaused);
+}
+
+bool GameModel::shouldPlayerPlay() {
+    return (!gamePaused && !bot->isEnabled());
+}
+
 void GameModel::movePlayerLeft() {
-    if (bot->isEnabled() && !gamePaused) {
-        bot->play();  // If the bot is enabled and the game is not paused, let the bot play.
+    if (shouldBotPlay()) {
+        bot->play();  
     }
-    if (!gamePaused && !bot->isEnabled()) {
+    if (shouldPlayerPlay()) {
         player.setX(player.getX() - 1);
         preventMovingOffScreen();
     }
@@ -56,30 +65,28 @@ void GameModel::movePlayerLeft() {
 
 
 void GameModel::movePlayerRight() {
-    if (bot->isEnabled() && !gamePaused) {
-        bot->play();  // If the bot is enabled and the game is not paused, let the bot play.
+    if (shouldBotPlay()) {
+        bot->play();  
     }
-    if (!gamePaused && !bot->isEnabled()) {
+    if (shouldPlayerPlay()) {
         player.setX(player.getX() + 1);
         preventMovingOffScreen();
     }
 }
 
-
 void GameModel::playerShoot() {
-    if (bot->isEnabled() && !gamePaused) {
-        bot->play();  // If the bot is enabled and the game is not paused, let the bot play.
+    if (shouldBotPlay()) {
+        bot->play();  
     }
-    if (!gamePaused && !bot->isEnabled()) {
+    if (shouldPlayerPlay()) {
         shoot(); 
     }
 }
 
-
 void GameModel::continueGame() {
     setGamePaused(false);
-    if (bot->isEnabled() && !gamePaused) {
-        bot->play();  // If the bot is enabled and the game is not paused, let the bot play.
+    if (shouldBotPlay()) {
+        bot->play();  
     }
 }
 
