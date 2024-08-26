@@ -1,5 +1,6 @@
 #include "../../include/models/Bot.h"
 #include "../../include/models/Player.h"
+#include "../../include/models/GameModel.h"
 #include <algorithm> // Include the <algorithm> header for std::min_element.
 
 // Constructor for the Bot class, initializing with a reference to the game model.
@@ -28,11 +29,13 @@ void Bot::play() {
                 model->setMsg("[Bot]: couldn't dodge"); // Set message indicating no possible dodge.
             } else {
                 model->setMsg("[Bot]: dodging left"); // Set message indicating dodging left.
-                player.setX(player.getX() - 1); // Move player left.
+                model->movePlayerLeft();
+                //player.setX(player.getX() - 1); // Move player left.
             }
         } else {
             model->setMsg("[Bot]: dodging right"); // Set message indicating dodging right.
-            model->getPlayer().setX(model->getPlayer().getX() + 1); // Move player right.
+            model->movePlayerRight(); 
+            //model->getPlayer().setX(model->getPlayer().getX() + 1); // Move player right.
         }
     } else {
         // Decide whether to shoot or aim at aliens or power-ups.
@@ -71,9 +74,9 @@ void Bot::play() {
 
             // Adjust player's position towards the calculated direction, avoiding bullets.
             if (direction < model->getPlayer().getX() && !checkBullets(player.getX() - 1)) {
-                model->getPlayer().setX(model->getPlayer().getX() - 1); // Move player left.
+                model->movePlayerLeft(); // Move player left.
             } else if (direction > model->getPlayer().getX() && !checkBullets(player.getX() + 1)) {
-                model->getPlayer().setX(model->getPlayer().getX() + 1); // Move player right.
+                model->movePlayerRight();  // Move player right.
             }
         }
         shootCounter++; // Increment the shoot counter.

@@ -14,9 +14,11 @@ public:
 class ConsoleController : public Controller // derive ConsoleController class from the Controller base class
 {
     GameModel* model; // pointer to the GameModel object
+    bool isBotEnabled;
+    Bot* bot;
 
 public:
-    ConsoleController(GameModel* model); // constructor that takes a GameModel pointer as parameter
+    ConsoleController(GameModel* model, bool isBotEnabled); // constructor that takes a GameModel pointer as parameter
 
     wchar_t getInput(); // override the getInput() function to get input from the console
 };

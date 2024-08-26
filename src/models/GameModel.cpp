@@ -48,45 +48,28 @@ bool GameModel::shouldBotPlay() {
     return (bot->isEnabled() && !gamePaused);
 }
 
-bool GameModel::shouldPlayerPlay() {
-    return (!gamePaused && !bot->isEnabled());
-}
-
 void GameModel::movePlayerLeft() {
-    if (shouldBotPlay()) {
-        bot->play();  
-    }
-    if (shouldPlayerPlay()) {
+    if (!gamePaused) {
         player.setX(player.getX() - 1);
         preventMovingOffScreen();
     }
 }
 
-
 void GameModel::movePlayerRight() {
-    if (shouldBotPlay()) {
-        bot->play();  
-    }
-    if (shouldPlayerPlay()) {
+    if (!gamePaused) {
         player.setX(player.getX() + 1);
         preventMovingOffScreen();
     }
 }
 
 void GameModel::playerShoot() {
-    if (shouldBotPlay()) {
-        bot->play();  
-    }
-    if (shouldPlayerPlay()) {
+    if (!gamePaused) {
         shoot(); 
     }
 }
 
 void GameModel::continueGame() {
     setGamePaused(false);
-    if (shouldBotPlay()) {
-        bot->play();  
-    }
 }
 
 void GameModel::toggleBot() {

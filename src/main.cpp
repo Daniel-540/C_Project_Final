@@ -9,7 +9,7 @@
 int main() {
     GameModel* simplegame = new GameModel();
     ConsoleView* view = new ConsoleView(simplegame);
-    ConsoleController* controller = new ConsoleController(simplegame);
+    ConsoleController* controller = new ConsoleController(simplegame, false);
     wchar_t ch = '\0';
     while(ch != 'q') {
         ch = controller->getInput();
