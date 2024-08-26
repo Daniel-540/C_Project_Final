@@ -7,8 +7,6 @@ ConsoleController::ConsoleController(GameModel* model, bool isBotEnabled) {
     this->bot = new Bot(model);
 };
 
-// !!! NEEDS REWORK: Anweisungen an Model sollen allgemein sein, es soll nicht die Eingabe weitergeleitet werden,
-// damit Model und Controller unabhängig voneinander sind. !!!
 wchar_t ConsoleController::getInput() {
     wchar_t ch = getch();
     wchar_t newCh;
