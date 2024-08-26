@@ -44,7 +44,6 @@ void GameModel::setMsg(std::string newMsg) { msg = newMsg; }  // Set a new game 
 // Get the current direction of alien movement.
 int GameModel::getDir() { return dir; }  // Return the direction in which aliens are moving.
 
-// L
 void GameModel::movePlayerLeft() {
     if (bot->isEnabled() && !gamePaused) {
         bot->play();  // If the bot is enabled and the game is not paused, let the bot play.
@@ -55,7 +54,7 @@ void GameModel::movePlayerLeft() {
     }
 }
 
-// R
+
 void GameModel::movePlayerRight() {
     if (bot->isEnabled() && !gamePaused) {
         bot->play();  // If the bot is enabled and the game is not paused, let the bot play.
@@ -66,7 +65,7 @@ void GameModel::movePlayerRight() {
     }
 }
 
-// ' '
+
 void GameModel::playerShoot() {
     if (bot->isEnabled() && !gamePaused) {
         bot->play();  // If the bot is enabled and the game is not paused, let the bot play.
@@ -76,7 +75,7 @@ void GameModel::playerShoot() {
     }
 }
 
-// C
+
 void GameModel::continueGame() {
     setGamePaused(false);
     if (bot->isEnabled() && !gamePaused) {
@@ -84,41 +83,12 @@ void GameModel::continueGame() {
     }
 }
 
-// B
 void GameModel::toggleBot() {
     bot->toggle();
 }
 
 // Prevent the player from moving off-screen.
 void GameModel::preventMovingOffScreen() {
-    if (player.getX() < 1) player.setX(1);  // Left boundary check.
-    if (player.getX() > width - 2) player.setX(width - 2);  // Right boundary check.
-}
-
-
-// Handle player control inputs and bot actions.
-void GameModel::control_player(wchar_t ch) {   
-    if (bot->isEnabled() && !gamePaused) {
-        bot->play();  // If the bot is enabled and the game is not paused, let the bot play.
-    }
-    if (!gamePaused && !bot->isEnabled()) {
-        // Player manual controls if the game is not paused and the bot is not enabled.
-        if (ch == 'L') {  // Move player left.
-            player.setX(player.getX() - 1);
-        } else if (ch == 'R') {  // Move player right.
-            player.setX(player.getX() + 1);
-        } else if (ch == ' ') {  // Player shoots if space bar is pressed.
-            shoot(); 
-        }
-    }
-
-    if (ch == 'C') {  // Continue the game if 'C' is pressed.
-        setGamePaused(false);
-    } else if (ch == 'B') {  // Toggle the bot's state if 'B' is pressed.
-        bot->toggle();
-    }
-
-    // Prevent the player from moving off-screen.
     if (player.getX() < 1) player.setX(1);  // Left boundary check.
     if (player.getX() > width - 2) player.setX(width - 2);  // Right boundary check.
 }
