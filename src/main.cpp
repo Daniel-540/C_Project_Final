@@ -11,7 +11,7 @@ int main() {
     ConsoleView* view = new ConsoleView(simplegame);
     ConsoleController* controller = new ConsoleController(simplegame);
     wchar_t ch = '\0';
-    while(ch != 'q' && !simplegame->isGameOver()) {
+    while(ch != 'q') {
         ch = controller->getInput();
         simplegame->simulate_game_step();
     }

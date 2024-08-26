@@ -22,6 +22,7 @@ GameModel::GameModel(): width(40), height(24), player(width / 2, 22, 3) {
 const std::vector<Bullet>& GameModel::getBullets() const { return bullets; }
 const std::vector<Bullet>& GameModel::getAlienBullets() const { return alienBullets; }
 const std::vector<Alien>& GameModel::getAliens() const { return aliens; }
+const std::vector<PowerUp>& GameModel::getPowerUps() const { return powerUps; }
 
 int GameModel::getGameWidth() { 
     return width; 
@@ -34,6 +35,9 @@ int GameModel::getGameHeight() {
 Player& GameModel::getPlayer() { 
     return player; 
 }
+
+int GameModel::getLevel() {return level;}
+void GameModel::setLevel(int newLevel) {level = newLevel;}
 
 void GameModel::control_player(wchar_t ch)
 {
@@ -55,65 +59,90 @@ void GameModel::update_bullets(std::vector<Bullet>& bulletArr) {
     for (auto &bullet : bulletArr) {
         bullet.move(bullet.getVelocityY());
     }
-    bullets.erase(std::remove_if(bullets.begin(), bullets.end(),
-        [](Bullet &b) { return b.isOffScreen(); }), bullets.end());
+    for (int i = 0; i < bullets.size(); i++) {
+        if (bullets[i].isOffScreen(height)) {
+            bullets.erase(bullets.begin()+i);
+        }
+    }
 }
 
 void GameModel::simulate_game_step() {
-    // Update player bullets
-    update_bullets(bullets);
-    
-    // Move aliens after a certain delay
-    alienMoveCounter++;
-    if (alienMoveCounter >= alienMoveDelay) {
-        move_aliens();
-        alienMoveCounter = 0;
+    if(!gameOver) {
+        if(aliens.size() == 0) {
+            newLevel()
+        }
+        
+        // Update player bullets
+        update_bullets(bullets);
+        
+        // Move aliens after a certain delay
+        alienMoveCounter++;
+        if (alienMoveCounter >= alienMoveDelay) {
+            move_aliens();
+            alienMoveCounter = 0;
+        }
+
+        // Aliens shoot after a certain delay
+        alienShootCounter++;
+        if (alienShootCounter >= alienShootDelay) {
+            alien_shoot();
+            alienShootCounter = 0;
+        }
+
+        powerUpMoveCounter++;
+        if (powerUpMoveCounter >= powerUpMoveDelay) {
+            powerUpMove();
+            powerUpMoveCounter = 0;
+        }
+
+        // Update alien bullets
+        update_bullets(alienBullets);
+
+        // Check collisions
+        check_collisions();
+
+        // Notify view of updates
     }
 
-    // Aliens shoot after a certain delay
-    alienShootCounter++;
-    if (alienShootCounter >= alienShootDelay) {
-        alien_shoot();
-        alienShootCounter = 0;
-    }
-
-    // Update alien bullets
-    update_bullets(alienBullets);
-
-    // Check collisions
-    check_collisions();
-
-    // Notify view of updates
     notifyUpdate();
 }
 
 void GameModel::check_collisions() {
     for (auto &bullet : bullets) {
-        for (auto &alien : aliens) {
-            if (alien.isAlive() && bullet.getX() == alien.getX() && bullet.getY() == alien.getY()) {
-                alien.destroy();
+        for (int i = 0; i < aliens.size(); i++) {
+            auto alien = aliens[i];
+            if (bullet.getX() == alien.getX() && bullet.getY() == alien.getY()) {
                 player.setScore(player.getScore()+alien.getScoreForKill());
+                if (rand() % 100 < 20) {
+                    powerUps.emplace_back(alien.getX(), alien.getY(), 1);
+                }
                 // Remove bullet after collision
                 bullet.setY(-1); // Mark bullet as off-screen
+                aliens.erase(aliens.begin()+i);
             }
         }
     }
-    bullets.erase(std::remove_if(bullets.begin(), bullets.end(),
-        [](Bullet &b) { return b.isOffScreen(); }), bullets.end());
 
     for (auto &alienBullet : alienBullets) {
         if (alienBullet.getX() == player.getX() && alienBullet.getY() == player.getY()) {
             player.setLives(player.getLives()-1);
             if (!player.isAlive()) {
-                toggleGameOver();
+                setGameOver();
             }
-            alienBullet.setY(-1);
+            alienBullet.setY(height+1);
         }
     }
 
     for (auto &alien : aliens) {
-        if (alien.getX() == player.getX() && alien.getY() == player.getY()) {
-            toggleGameOver();
+        if (alien.getY() == player.getY()) {
+            setGameOver();
+        }
+    }
+
+    for (int i = 0; i < powerUps.size(); i++) {
+        if (powerUps[i].getX() == player.getX() && powerUps[i].getY() == player.getY()) {
+            powerUps.erase(powerUps.begin()+i);
+            player.setLives(player.getLives()+2);
         }
     }
 }
@@ -125,26 +154,22 @@ void GameModel::move_aliens() {
 
     // Check if any alien is at the screen edge
     for (auto &alien : aliens) {
-        if (alien.isAlive()) {
-            if ((dir == 1 && alien.getX() >= width - 2) || (dir == -1 && alien.getX() <= 1)) {
-                needToMoveDown = true;
-                break;
-            }
+        if ((dir == 1 && alien.getX() >= width - 2) || (dir == -1 && alien.getX() <= 1)) {
+            needToMoveDown = true;
+            break;
         }
     }
 
     // Move aliens sideways or down
     for (auto &alien : aliens) {
-        if (alien.isAlive()) {
-            if (needToMoveDown) {
-                alien.move(0, 1); // Move down
-                if (alien.getY() > height) { //Check if any alien hits bottom border
-                    toggleGameOver();
-                    break;
-                }
-            } else {
-                alien.move(dir, 0); // Move sideways
+        if (needToMoveDown) {
+            alien.move(0, 1); // Move down
+            if (alien.getY() > height) { //Check if any alien hits bottom border
+                setGameOver();
+                break;
             }
+        } else {
+            alien.move(dir, 0); // Move sideways
         }
     }
 
@@ -157,8 +182,17 @@ void GameModel::move_aliens() {
 void GameModel::alien_shoot() {
     // Randomly select aliens to shoot
     for (auto &alien : aliens) {
-        if (alien.isAlive() && rand() % 100 < 10) { // 10% chance per alien to shoot
+        if (rand() % 100 < 10) { // 10% chance per alien to shoot
             alienBullets.emplace_back(alien.getY() + 1, alien.getX(), 1);
+        }
+    }
+}
+
+void GameModel::powerUpMove() {
+    for (int i = 0; i < powerUps.size(); i++) {
+        powerUps[i].move();
+        if (powerUps[i].isOffScreen(height)) {
+            powerUps.erase(powerUps.begin()+i);
         }
     }
 }
@@ -167,6 +201,6 @@ bool GameModel::isGameOver() {
     return gameOver;
 }
 
-void GameModel::toggleGameOver() {
-    gameOver = !gameOver;
+void GameModel::setGameOver() {
+    gameOver = true;
 }

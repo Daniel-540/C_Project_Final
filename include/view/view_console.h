@@ -3,6 +3,7 @@
 #include "../observer.h"  // Include Observer header file
 #include "../models/GameModel.h"  // Include GameModel header file
 #include <ncurses.h>
+#include <string>
 
 class ConsoleView : public Observer  // Inheriting from Observer class
 {
@@ -24,6 +25,12 @@ public:
     void drawLives(int lives);
 
     void drawScore(int score);
+
+    void drawLevel(int level);
+
+    void drawPowerUp(int y, int x);
+
+    void printMessage(int y, int x, std::string msg);
 
 private:
     // Textures

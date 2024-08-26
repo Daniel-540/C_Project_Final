@@ -11,7 +11,7 @@ public:
     int getY() const;
     int getVelocityY() const;
     void setY(int newY);
-    bool isOffScreen();
+    bool isOffScreen(int height);
     void move(int velocity);
 };
 

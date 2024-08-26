@@ -18,8 +18,8 @@ void Bullet::setY(int newY) {
     y = newY;
 }
 
-bool Bullet::isOffScreen() {
-    return y < 1;
+bool Bullet::isOffScreen(int height) {
+    return (y < 1 || y > height);
 }
 
 void Bullet::move(int velocity) { 
