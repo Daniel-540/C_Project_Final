@@ -6,7 +6,6 @@
 #include <vector>
 #include <string>
 #include <cmath>
-#include "GameModel.h"
 
 // Constructor for the GameModel class, initializing game parameters.
 GameModel::GameModel() : width(40), height(24), player(20, 22, 3), bot(new Bot(this)) {
