@@ -12,14 +12,14 @@ void Bot::play() {
     if (checkBullets(player.getX())) {
         if (checkBullets(player.getX()+1) || (player.getX()+1 >= model->getGameWidth())) {
             if (checkBullets(player.getX()-1) || player.getX()-1 <= 0) {
-                //model->setMsg("[Bot]: couldnt dodge");
+                model->setMsg("[Bot]: couldnt dodge");
             } else {
-                //model->setMsg("[Bot]: dodging left");
+                model->setMsg("[Bot]: dodging left");
                 player.setX(player.getX()-1);
             }
 
         } else {
-            //model->setMsg("[Bot]: dodging right");
+            model->setMsg("[Bot]: dodging right");
             model->getPlayer().setX(model->getPlayer().getX()+1);
         }
     } else {
@@ -40,13 +40,13 @@ void Bot::play() {
                                         [](const PowerUp& a, const PowerUp& b) {
                                             return a.getY() > b.getY();
                                         });
-                if (player.getY() - nearestAlien->getY() > 5 && (player.getY() - nearestPowerUp->getY() <= std::abs(player.getX() - nearestPowerUp->getX())+2)) {
+                if (player.getY() - nearestAlien->getY() > 5 && (player.getY() - nearestPowerUp->getY() <= (int)(std::abs(player.getX() - nearestPowerUp->getX())/4))) {
                     direction = nearestPowerUp->getX();
                 } else {
-                    direction = alienPositionX*((player.getY()-alienPositionY)/5)*model->getDir();
+                    direction = alienPositionX+((int)(static_cast<float>(player.getY()-alienPositionY)/5.0))*model->getDir();
                 }
             } else {
-                direction = alienPositionX+((player.getY()-alienPositionY)/5)*model->getDir();
+                direction = alienPositionX+((int)(static_cast<float>(player.getY()-alienPositionY)/5.0))*model->getDir();
             }
             model->setMsg("[Bot] aiming at: "+std::to_string(direction));
 
