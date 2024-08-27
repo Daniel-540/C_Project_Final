@@ -38,13 +38,13 @@ void Bot::play() {
     model->setMsg("[Bot] aiming at: "+std::to_string(direction));
 
     if (direction < model->getPlayer().getX() && !checkBullets(player.getX()-1)) {
-        model->getPlayer().setX(model->getPlayer().getX()-1);
+        model->movePlayerLeft();
     } else if (direction > model->getPlayer().getX() && !checkBullets(player.getX()+1)) {
-        model->getPlayer().setX(model->getPlayer().getX()+1);
+         model->movePlayerRight();
     }
 
-    if (shootCounter >= 5) {
-        //model->shoot();
+    if (shootCounter >= 0) {
+        model->shoot();
         shootCounter = 0;
     }
     shootCounter++;

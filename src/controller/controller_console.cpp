@@ -7,6 +7,12 @@ ConsoleController::ConsoleController(GameModel* model, bool isBotEnabled) {
     this->bot = new Bot(model);
 };
 
+
+/* The functionality of the controller and the model is now separated, 
+so the handling of input is independent of the model functions. 
+This way, one could also accept other inputs via the controller 
+and would only need to configure which input calls which function of 
+the model, without having to change the model. */
 wchar_t ConsoleController::getInput() {
     wchar_t ch = getch();
     wchar_t newCh;
@@ -15,16 +21,12 @@ wchar_t ConsoleController::getInput() {
         if (ch == KEY_LEFT) {model->movePlayerLeft();} 
         else if (ch == KEY_RIGHT) {model->movePlayerRight();}
         else if (ch == ' ') {model->playerShoot();}
-        else if (ch == 'q') {newCh = 'q';}
-        else if (ch == 'c') {model->continueGame();}
-        //model->control_player(newCh);
     } else {
-        if (ch == KEY_LEFT) {bot->play();} 
-        else if (ch == KEY_RIGHT) {bot->play();}
-        else if (ch == ' ') {bot->play();}
-        else if (ch == 'q') {newCh = 'q';}
-        else if (ch == 'c') {model->continueGame();}
+        bot->play();
     }
+    if (ch == 'q') {newCh = 'q';}
+    else if (ch == 'c') {model->continueGame();}
+
     return newCh; 
 }
 
