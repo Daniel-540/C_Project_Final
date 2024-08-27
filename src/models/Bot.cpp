@@ -8,66 +8,91 @@ void Bot::toggle() {enabled = !enabled;}
 bool Bot::isEnabled() {return enabled;}
 
 void Bot::play() {
-    auto player = model->getPlayer();
-    if (checkBullets(player.getX())) {
-        if (checkBullets(player.getX()+1) || (player.getX()+1 >= model->getGameWidth())) {
-            if (checkBullets(player.getX()-1) || player.getX()-1 <= 0) {
-                model->setMsg("[Bot]: couldnt dodge");
-            } else {
-                model->setMsg("[Bot]: dodging left");
-                player.setX(player.getX()-1);
-            }
-
-        } else {
-            model->setMsg("[Bot]: dodging right");
-            model->getPlayer().setX(model->getPlayer().getX()+1);
-        }
+    auto player = model->getPlayer(); 
+    auto nearestAlien = std::min_element(model->getAliens().begin(), model->getAliens().end(),
+                                [](const Alien& a, const Alien& b) {
+                                    return a.getY() > b.getY();
+                                });
+    int alienPositionX = nearestAlien->getX();
+    int alienPositionY = nearestAlien->getY();
+    int direction;
+    if (checkBullets(model->getPlayer().getX())) {
+        direction = searchForBulletFreeLane(model->getPlayer().getX());
     } else {
-        if (shootCounter >= 5) {
-            model->shoot();
-            shootCounter = 0;
+        int powerUpDir = checkPowerUps();
+        if (powerUpDir >= 0) {
+            direction = powerUpDir;
         } else {
-            auto nearestAlien = std::min_element(model->getAliens().begin(), model->getAliens().end(),
-                                        [](const Alien& a, const Alien& b) {
-                                            return a.getY() > b.getY();
-                                        });
-            int alienPositionX = nearestAlien->getX();
-            int alienPositionY = nearestAlien->getY();
-            int direction;
-            
-            if (model->getPowerUps().size() > 0) {
-                auto nearestPowerUp = std::min_element(model->getPowerUps().begin(), model->getPowerUps().end(),
-                                        [](const PowerUp& a, const PowerUp& b) {
-                                            return a.getY() > b.getY();
-                                        });
-                if (player.getY() - nearestAlien->getY() > 5 && (player.getY() - nearestPowerUp->getY() <= std::max((int)(std::abs(player.getX() - nearestPowerUp->getX())/4), 5))) {
-                    direction = nearestPowerUp->getX();
-                } else {
-                    direction = alienPositionX+((int)(static_cast<float>(player.getY()-alienPositionY)/5.0))*model->getDir();
-                }
-            } else {
-                direction = alienPositionX+((int)(static_cast<float>(player.getY()-alienPositionY)/5.0))*model->getDir();
-            }
-            model->setMsg("[Bot] aiming at: "+std::to_string(direction));
-
-            if (direction < model->getPlayer().getX() && !checkBullets(player.getX()-1)) {
-                model->getPlayer().setX(model->getPlayer().getX()-1);
-            } else if (direction > model->getPlayer().getX() && !checkBullets(player.getX()+1)) {
-                model->getPlayer().setX(model->getPlayer().getX()+1);
-            }
+            direction = alienPositionX+((int)(static_cast<float>(player.getY()-alienPositionY)/5.0))*model->getDir();
         }
-        shootCounter++;
     }
+    model->setMsg("[Bot] aiming at: "+std::to_string(direction));
+
+    if (direction < model->getPlayer().getX() && !checkBullets(player.getX()-1)) {
+        model->getPlayer().setX(model->getPlayer().getX()-1);
+    } else if (direction > model->getPlayer().getX() && !checkBullets(player.getX()+1)) {
+        model->getPlayer().setX(model->getPlayer().getX()+1);
+    }
+
+    if (shootCounter >= 5) {
+        //model->shoot();
+        shootCounter = 0;
+    }
+    shootCounter++;
+
     
 }
 
 bool Bot::checkBullets(int laneToCheck) {
     for (auto alienBullet : model->getAlienBullets()) {
-        if(alienBullet.getY() > model->getPlayer().getY()-3) {
+        if(alienBullet.getY() > model->getPlayer().getY()-2 && alienBullet.getY() <= model->getPlayer().getY()) {
             if(laneToCheck == alienBullet.getX()) {
                 return true;
             }
         }
     }
     return false;
+}
+
+int Bot::searchForBulletFreeLane(int lane) {
+    if (checkBullets(lane)) {
+        int right = checkDirection(lane, 1);
+        int left = checkDirection(lane, -1);
+        if (right > model->getGameWidth()-2) {
+            return left;
+        }
+        if (left < 1) {
+            return right;
+        }
+        if (right - lane > lane - left) {
+            return left;
+        }
+        return right;
+    }
+    return lane;
+}
+
+int Bot::checkDirection(int lane, int dir) {
+    if (checkBullets(lane)) {
+        return checkDirection(lane+dir, dir);
+    }
+    return lane;
+}
+
+int Bot::checkPowerUps() {
+    if (model->getPowerUps().size() > 0 && model->getPowerUps()[0].getY() <= model->getPlayer().getY()) {
+        auto nearestPowerUp = model->getPowerUps()[0];
+        for (auto powerUp : model->getPowerUps()) {
+            if (powerUp.getY() <= model->getPlayer().getY()) {
+                if (powerUp.getY() > nearestPowerUp.getY()) {
+                    nearestPowerUp = powerUp;
+                }
+            }
+        }
+        if (model->getPlayer().getY() - nearestPowerUp.getY() <= std::max((int)(std::abs(model->getPlayer().getX() - nearestPowerUp.getX())/4), 5)) {
+            return nearestPowerUp.getX();
+        }
+        return -1;
+    }
+    return -1;
 }

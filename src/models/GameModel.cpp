@@ -36,6 +36,9 @@ void GameModel::control_player(wchar_t ch)
 {   
     if (bot->isEnabled() && !gamePaused) {
         bot->play();
+        if (ch == ' ') { // Space bar as shooting key
+            shoot(); 
+        }
     }
     if (!gamePaused && !bot->isEnabled()) {
         if (ch == 'L') {
@@ -236,6 +239,6 @@ void GameModel::spawnAliens(int rows) {
 void GameModel::newLevel() {
     setLevel(level+1);
     setAlienShootDelay(std::max(21-level, 1));
-    setBulletMoveDelay(std::max(7-level, 0));
+    setBulletMoveDelay(std::max(11-level, 0));
     spawnAliens(std::min(level, 4));
 }

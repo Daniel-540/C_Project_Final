@@ -8,6 +8,9 @@ class Bot {
 private:
     bool enabled = false;
     bool checkBullets(int laneToCheck);
+    int checkPowerUps();
+    int searchForBulletFreeLane(int lane);
+    int checkDirection(int lane, int dir);
     int shootCounter = 0;
 public:
     Bot(GameModel* model);
