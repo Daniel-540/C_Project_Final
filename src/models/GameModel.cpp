@@ -273,6 +273,6 @@ void GameModel::spawnAliens(int rows) {
 void GameModel::newLevel() {
     setLevel(level + 1);  // Increase the level.
     setAlienShootDelay(std::max(21 - level, 1));  // Decrease alien shoot delay.
-    setBulletMoveDelay(std::max(7 - level, 0));  // Decrease bullet move delay.
+    setBulletMoveDelay(std::max(7 - level, 2));  // Decrease bullet move delay.
     spawnAliens(std::min(level, 4));  // Spawn a number of rows of aliens based on the level.
 }
