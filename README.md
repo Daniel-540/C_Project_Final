@@ -1,17 +1,14 @@
-- Link to task: https://www.uni-muenster.de/AISystems/courses/CPP/site/html/sections/final_task/final_task.html
+Abgabe von Christopher Lucibello, Ole Komorowski, Daniel Nolte
 
-- Compile and run the Code on the WSL Kernel (Linux Subsystem on Windows) for easier library linking.
-  For help: https://code.visualstudio.com/docs/remote/wsl
+Befehle zur Ausführung im Final_Task Verzeichnis:
+make game
+./game
 
-Anforderungen:
-Model:
-- Methoden beschreiben als Kommentar und 3 Testfälle (pro Methode?)
-View:
-- Programm auf dem Jupyterhub testen
-Control:
-- Alternative Control-Möglichkeit überlegen, sodass dieses auch umgesetzt wird (z.B. Steuerung über Trackpad)
-- Alternative Umsetzung als Kommentar oder Implementierung
-Abgabe:
-- zip Datei mit allen notwendigen Dateien inklusive README
-- Beschreibung zur Kompilierung, Ausführung und zum Ablauf in der README
-- Einsatz von KI in der README angeben, Promts angeben? Abgabe 31.08.2024
+Das Programm läuft im Jupyterhub im Terminal. 
+
+Ablauf: Bewege den Spieler mit den Pfeiltasten nach links und rechts, schieße mit Leertaste. Aktiviere den automatischen Controller mit b. Beende das Spiel mit q. Drücke
+c wenn ein Level erfolgreich beendet ist um das nächste Level zu starten. Aliens können PowerUps fallenlassen, diese fallen runter und müssen vom Spieler eingesammelt werden.
+
+Einsatz von KI: Wir haben ChatGPT genutzt um Fehlermeldungen zu beheben. Wir haben also die Fehlermeldung als Promt genutzt, wenn wir nicht wussten, wie wir den Fehler beheben.
+Da wir unter anderem viel an der Ordnerstruktur geändert haben, mussten wir die Makefile anpassen. Hier haben wir ebenfalls ChatGPT zur Hilfe genommen. 
+Bei der Erstellung von Kommentaren haben wir auch ChatGPT genutzt, diese haben wir anschließend überprüft und überarbeitet.
