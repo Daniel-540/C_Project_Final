@@ -16,18 +16,22 @@ the model, without having to change the model. */
 wchar_t ConsoleController::getInput() {
     wchar_t ch = getch();
     wchar_t newCh;
-    if (ch == 'b') {model->toggleBot(); this->isBotEnabled = !this->isBotEnabled;}
-    if (!isBotEnabled) {
-        if (ch == KEY_LEFT) {model->movePlayerLeft();} 
-        else if (ch == KEY_RIGHT) {model->movePlayerRight();}
-        else if (ch == ' ') {model->playerShoot();}
-    } else {
-        bot->play();
+    if (!isGamePaused()) {
+        if (ch == 'b') {model->toggleBot(); this->isBotEnabled = !this->isBotEnabled;}
+        if (!isBotEnabled) {
+            if (ch == KEY_LEFT) {model->movePlayerLeft();} 
+            else if (ch == KEY_RIGHT) {model->movePlayerRight();}
+            else if (ch == ' ') {model->playerShoot();}
+        } else {
+            bot->play();
+        }
     }
     if (ch == 'q') {newCh = 'q';}
     else if (ch == 'c') {model->continueGame();}
 
     return newCh; 
 }
+
+bool ConsoleController::isGamePaused() { return model->isGamePaused(); }  // Return whether the game is paused.
 
 

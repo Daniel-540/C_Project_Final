@@ -45,23 +45,20 @@ void GameModel::setMsg(std::string newMsg) { msg = newMsg; }  // Set a new game 
 int GameModel::getDir() { return dir; }  // Return the direction in which aliens are moving.
 
 void GameModel::movePlayerLeft() {
-    if (!gamePaused) {
-        player.setX(player.getX() - 1);
-        preventMovingOffScreen();
-    }
+    player.setX(player.getX() - 1);
+    preventMovingOffScreen();
+   
 }
 
 void GameModel::movePlayerRight() {
-    if (!gamePaused) {
-        player.setX(player.getX() + 1);
-        preventMovingOffScreen();
-    }
+    player.setX(player.getX() + 1);
+    preventMovingOffScreen();
+   
 }
 
 void GameModel::playerShoot() {
-    if (!gamePaused) {
-        shoot(); 
-    }
+    shoot(); 
+    
 }
 
 void GameModel::continueGame() {

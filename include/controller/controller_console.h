@@ -16,11 +16,15 @@ class ConsoleController : public Controller // derive ConsoleController class fr
     GameModel* model; // pointer to the GameModel object
     bool isBotEnabled;
     Bot* bot;
+    bool gamePaused = false;
 
 public:
     ConsoleController(GameModel* model, bool isBotEnabled); // constructor that takes a GameModel pointer as parameter
 
     wchar_t getInput(); // override the getInput() function to get input from the console
+
+private:
+    bool isGamePaused();    
 };
 
 #endif  // end of header guard
