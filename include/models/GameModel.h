@@ -56,10 +56,10 @@ public:
     void update_bullets(std::vector<Bullet>& bulletArr);
     void check_collisions();
     void shoot(); // Specify velocityY to make bullets move upwards
-    const std::vector<Bullet>& getBullets() const;
-    const std::vector<Bullet>& getAlienBullets() const;
-    const std::vector<Alien>& getAliens() const;
-    const std::vector<PowerUp>& getPowerUps() const;
+    std::vector<Bullet>& getBullets();
+    std::vector<Bullet>& getAlienBullets();
+    std::vector<Alien>& getAliens();
+    std::vector<PowerUp>& getPowerUps();
 
     std::string getMsg();
     void setMsg(std::string newMsg);

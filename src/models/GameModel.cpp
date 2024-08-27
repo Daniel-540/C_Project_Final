@@ -13,10 +13,10 @@ GameModel::GameModel() : width(40), height(24), player(20, 22, 3), bot(new Bot(t
 }
 
 // Getters for different game entities.
-const std::vector<Bullet>& GameModel::getBullets() const { return bullets; }  // Return the list of player bullets.
-const std::vector<Bullet>& GameModel::getAlienBullets() const { return alienBullets; } // Return the list of alien bullets.
-const std::vector<Alien>& GameModel::getAliens() const { return aliens; }  // Return the list of aliens.
-const std::vector<PowerUp>& GameModel::getPowerUps() const { return powerUps; } // Return the list of power-ups.
+std::vector<Bullet>& GameModel::getBullets() { return bullets; }  // Return the list of player bullets.
+std::vector<Bullet>& GameModel::getAlienBullets() { return alienBullets; } // Return the list of alien bullets.
+std::vector<Alien>& GameModel::getAliens() { return aliens; }  // Return the list of aliens.
+std::vector<PowerUp>& GameModel::getPowerUps() { return powerUps; } // Return the list of power-ups.
 
 // Getters for game dimensions.
 int GameModel::getGameWidth() { return width; }  // Return the game width.
@@ -137,14 +137,17 @@ void GameModel::simulate_game_step() {
 // Check for collisions between bullets, aliens, the player, and power-ups.
 void GameModel::check_collisions() {
     // Check for collisions between player bullets and aliens.
-    for (auto &bullet : bullets) {
+    for (auto &bullet : bullets) {  // Use non-const reference
         for (int i = 0; i < aliens.size(); i++) {
-            auto alien = aliens[i];
+            auto &alien = aliens[i];  // Use non-const reference to the alien
             if (bullet.getX() == alien.getX() && bullet.getY() == alien.getY()) {
                 player.setScore(player.getScore() + alien.getScoreForKill());  // Increase score.
+                
+                // 15% chance to spawn a power-up.
                 if (rand() % 100 < 15) {
-                    powerUps.emplace_back(alien.getX(), alien.getY());  // 15% chance to spawn a power-up.
+                    powerUps.emplace_back(alien.getX(), alien.getY());
                 }
+                
                 bullet.setY(-1);  // Mark bullet as off-screen after collision.
                 aliens.erase(aliens.begin() + i);  // Remove the alien.
                 break;  // Stop checking further aliens for this bullet.
@@ -153,18 +156,21 @@ void GameModel::check_collisions() {
     }
 
     // Check for collisions between alien bullets and the player.
-    for (auto &alienBullet : alienBullets) {
+    for (auto &alienBullet : alienBullets) {  // Use non-const reference
         if (alienBullet.getX() == player.getX() && alienBullet.getY() == player.getY()) {
             player.setLives(player.getLives() - 1);  // Decrease player lives.
+            
+            // End game if player is out of lives.
             if (!player.isAlive()) {
-                setGameOver();  // End game if player is out of lives.
+                setGameOver();
             }
+            
             alienBullet.setY(height + 1);  // Mark alien bullet as off-screen.
         }
     }
 
     // Check for collisions between aliens and the player.
-    for (auto &alien : aliens) {
+    for (auto &alien : aliens) {  // Use non-const reference
         if (alien.getY() == player.getY()) {
             setGameOver();  // End game if any alien reaches the player's row.
         }
@@ -172,12 +178,14 @@ void GameModel::check_collisions() {
 
     // Check for collisions between power-ups and the player.
     for (int i = 0; i < powerUps.size(); i++) {
-        if (powerUps[i].getX() == player.getX() && powerUps[i].getY() == player.getY()) {
+        auto &powerUp = powerUps[i];  // Use non-const reference to the power-up
+        if (powerUp.getX() == player.getX() && powerUp.getY() == player.getY()) {
             powerUps.erase(powerUps.begin() + i);  // Remove the power-up after collection.
             player.setLives(player.getLives() + 1);  // Increase player lives.
         }
     }
 }
+
 
 // Method to handle player shooting.
 void GameModel::shoot() {
@@ -191,7 +199,7 @@ void GameModel::move_aliens() {
     // Check if any alien is at the screen edge.
     for (auto &alien : aliens) {
         if ((dir == 1 && alien.getX() >= width - 2) || (dir == -1 && alien.getX() <= 1)) {
-            needToMoveDown = true;  // If an alien reaches an edge, set flag to move down.
+            needToMoveDown = true;
             break;
         }
     }
@@ -199,19 +207,18 @@ void GameModel::move_aliens() {
     // Move aliens either sideways or down based on the flag.
     for (auto &alien : aliens) {
         if (needToMoveDown) {
-            alien.move(0, 1);  // Move down if any alien is at the edge.
-            if (alien.getY() > height) {  // End game if any alien moves beyond the bottom border.
+            alien.move(0, 1); // Move down.
+            if (alien.getY() > height) {
                 setGameOver();
                 break;
             }
         } else {
-            alien.move(dir, 0);  // Move sideways based on the current direction.
+            alien.move(dir, 0); // Move sideways.
         }
     }
 
-    // Change the direction of movement after moving down.
     if (needToMoveDown) {
-        dir *= -1;  // Reverse direction after moving down.
+        dir *= -1; // Reverse direction.
     }
 }
 

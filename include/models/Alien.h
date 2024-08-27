@@ -10,6 +10,8 @@ public:
     int getY() const;
     int getScoreForKill() const;
     void move(int dx, int dy);
+    void setX(int newX) { x = newX; }
+    void setY(int newY) { y = newY; }
 };
 
 #endif
