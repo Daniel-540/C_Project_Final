@@ -1,7 +1,9 @@
 Abgabe von Christopher Lucibello, Ole Komorowski, Daniel Nolte
 
 Befehle zur Ausführung im Final_Task Verzeichnis:
+
 make game
+
 ./game
 
 Das Programm läuft im Jupyterhub im Terminal. 
