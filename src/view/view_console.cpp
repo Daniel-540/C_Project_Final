@@ -15,7 +15,6 @@ ConsoleView::~ConsoleView() {
 
 void ConsoleView::update() {
     erase();
-    refresh();
     if (! model->isGameOver()) {
         // Draw walls
         for (int i = 0; i < model->getGameWidth(); i++) {
